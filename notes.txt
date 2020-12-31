@@ -1,0 +1,51 @@
+1. resources:
+Mern stack with docker: https://dev.to/sujaykundu777/utilizing-the-power-of-docker-while-building-mern-apps-using-mern-docker-4olb
+2. tech stack:
+mongoose: pre hook
+Bcrypt: 
+  - hashing a password(always same length) + a salt(random string) = same password will no longer yield the same hash. 
+  - hash password before storing it in the database: generate a salt
+JWT:
+  -Once the user is logged in, each subsequent request will include JWT
+  -Format: 
+About Mongoose:
+  -methods: defined on the instance(document)
+  -statics: defined on the model model. You need search through all the instances
+  -query:
+    -1. { _id: req.user._id, 'cart.id': req.query.productId } find this doc with user id and update the object with id === productId in the cart
+    -2. update by increase the current quantity by 1 { $inc: { 'cart.$.quantity': 1 } }
+    -3. delete a specfic obj from an array{$pull:{cart: {id:req.query._id}}}
+  - populate(): design schema: refering other documents from other collection(product <=> user)
+    before populate, we will have [_id,_id,...] the document ids in the posts from user.
+    Once it's called we will go to the post collection and find the id and return user with detailed post(complete documents)
+  -index: https://docs.mongodb.com/manual/core/index-text/
+About req&res:
+  -req.params/req.query:`/addToCart?productId=${_id}` params: _id/ query={productId:_id}
+Authentification summary:
+  -user signup: store user info into database and bcrypt password (generate salt and hash the password)
+  -user loginin: find user email => compare password(bcrypt does the heavy lifting) => generate a token.tokenExp and store that in the database => store the token/tokenExp at cookies in the res
+  -user logout: use cookies to find user(auth middleware) and store user token and user document in the req and clear that user token(&tokenExp)
+
+  About redux:
+  - x lifted up state to parents: centralized location to contain the global state
+  - Redux expects that all state updates are done immutably. 
+  - actions: are functions that return type and payload
+  - why we make api calls in user_actions rather than reducers:
+    Because reducers are supposed to be “pure” (as in, they don’t change anything outside their scope) we can’t do any API calls or dispatch actions from inside a reducer.
+  - reducer is the function that receives the current state and an action and return new state
+  - store: where current state lives in. It an object with few methods on it. Dispatch an action to change state(use store.getState())
+  - dispatch: only way to change the state
+  - combineReducer as the application grows complex you want to split your reducing function into multiple functions, each managing independent part of state. The combineReducer function can help turn object whose value are different reducing functions into a single reducing function which can be passed to combineReducers
+  - the provider makes the redux store available to any nested component
+  - Redux-thunk:  it is a middleware that looks at every action that passes through the system, and if it’s a function, it calls that function. Because actions are function return functions
+  - add the redux dev tools chrome extension to my redux store
+About react router:
+  -
+  3. process:
+  1. database setup
+  2. backend user setup(register/login/auth/logout/)
+  what does the user.js do: deal with user logic like login and return payload
+  3. frontend user_actions(resgister/login/auth/logout): get the data from backend and store them as payload(return {action payload})
+  4. user_actions to update the current state
+  5. product js:
+    -use multer to handle file uploads: we define a storage location for our files. In our case we store files to disk(multer.diskStorage)

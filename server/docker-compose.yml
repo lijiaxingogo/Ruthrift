@@ -1,0 +1,25 @@
+version: '3.7'
+
+services:
+  webapp-server:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    image: myapp-server-img
+    container_name: myapp-node-express
+    volumes:
+      - .:/usr/src/app
+      - /usr/src/app/node_modules
+    ports:
+      - '8080:8080'
+    depends_on:
+      - mongo
+    env_file: .env
+    environment:
+      - MONGO_URI='mongodb+srv://Jiajiajiayou:lijiaxin123@cluster0.zhctm.mongodb.net/<dbname>?retryWrites=true&w=majority'
+
+  mongo:
+    image: mongo
+    container_name: myapp-mongodb
+    ports:
+      - '27017:27017'
